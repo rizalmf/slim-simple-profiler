@@ -22,9 +22,9 @@ class Profiler
     private static $httpstack;
 
     /**
-     * @param Container|null $container
+     * @param Container $container
      */
-    public function __construct(Container $container = null) {
+    public function __construct(Container $container) {
         $this->container = $container;        
     }
 
