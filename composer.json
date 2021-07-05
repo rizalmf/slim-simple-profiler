@@ -1,7 +1,7 @@
 {
   "name": "rizalmf/slim-simple-profiler",
   "type": "library",
-  "description": "Simple middleware for profiling slim framework 3",
+  "description": "Simple Middleware For Profiling Slim Framework 3",
   "keywords": [
     "Profiler", 
     "PSR-7", 

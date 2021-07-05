@@ -1,6 +1,6 @@
 # Slim Simple Profiler
 
-Simple Slim Framework 3 Profiler Middleware 
+Simple Middleware For Profiling Slim Framework 3
 
 ## Sneakpeak
 
@@ -11,7 +11,7 @@ Simple Slim Framework 3 Profiler Middleware
   - [Enable/disable darkmode](#Enable/disable-darkmode)
   - [Eloquent/ORM](#eloquent/orm)
   - [Doctrine/ORM](#doctrine/orm)
-  - [Guzzle Http](#guzzle-http)
+  - [GuzzleHttp](#guzzlehttp)
 - [Testing](#test)
 - [License](#license)
 
@@ -108,13 +108,13 @@ $entityManager->getConnection()
     ->setSQLLogger($logger);
 
 // last. register to container
-$container->setDoctrineStack($stack);
+$container->setDoctrineStack($logger);
 
 // add middleware
 $app->add(new Profiler($container));
 ```
 
-### Guzzle Http
+### GuzzleHttp
 catch guzzlehttp events via Profiler::guzzleStack()
 ```php
 // ...
