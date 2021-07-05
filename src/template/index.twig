@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{method}} - {{uri}}</title>
+    <style type="text/css">
+        .body-dark {
+            background-color:#070707;
+        }
+        fieldset {
+            border:1px solid rgb(51, 139, 77);
+            padding:6px 10px 10px 10px;
+            margin:0px;
+            border-radius:4px;
+        }
+        .fieldset-default {
+            background-color:#eee;
+        }
+        .fieldset-dark {
+            background-color:#070707;
+        }
+        legend {
+            color:rgb(51, 139, 77);
+        }
+        legend:hover {
+            cursor: pointer;
+        }
+        .meta {
+            font-family:monospace;
+            max-width: fit-content;
+            width:100%;
+        }
+        .metaskin {
+            text-align:left;
+            width:100%;
+        }
+        .metahead-default {
+            padding:5px;width:50%;
+            color:#000;
+            font-weight:italic;
+            background-color:#ddd;
+        }
+        .metahead-dark {
+            padding:5px;width:50%;
+            color:#fff;
+            font-weight:italic;
+            background-color:#1a1a1a;
+        }
+        .metavalue-default {
+            padding:5px;width:50%;
+            color:#000;
+            font-weight:normal;
+            background-color:#ddd;
+        }
+        .metavalue-dark {
+            padding:5px;width:50%;
+            color:#fff;
+            font-weight:normal;
+            background-color:#1a1a1a;
+        }
+        .request-stats-default {
+            color:#000;
+            font-weight:normal;
+            padding:4px 0 4px 0;
+            text-align:right;
+        }
+        .request-stats-dark {
+            color:#fff;
+            font-weight:normal;
+            padding:4px 0 4px 0;
+            text-align:right;
+        }
+        .query-default {
+            padding:5px;
+            vertical-align:top;
+            color:#000;
+            width:5%;
+            font-weight:normal;
+            background-color:#ddd;
+        }
+        .query-dark {
+            padding:5px;
+            vertical-align:top;
+            color:#fff;
+            width:5%;
+            font-weight:normal;
+            background-color:#1a1a1a;
+        }
+        #dataResponse {
+            text-align: left;
+            display: block;
+        }
+    </style>
+</head>
+<body class="{{darkMode ? 'body-dark' : ''}}">
+<div class="meta">
+	<table class="metaskin">
+		<tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend id="lResponse" align="right" onclick="toggleResponse()">
+                        <strong>RESPONSE</strong>
+					</legend>
+					<div id="dataResponse" class="{{darkMode ? 'request-stats-dark' : 'request-stats-default'}}">
+                        {{response}}
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>META</strong></legend>
+					<table style="width:100%;">
+						<tr>
+							<td class="{{darkMode ? 'metahead-dark' : 'metahead-default'}}">URI</td>
+							<td class="{{darkMode ? 'metavalue-dark' : 'metavalue-default'}}">{{uri}}
+							</td>
+						</tr>
+						<tr>
+							<td class="{{darkMode ? 'metahead-dark' : 'metahead-default'}}">METHOD</td>
+							<td class="{{darkMode ? 'metavalue-dark' : 'metavalue-default'}}">{{method}}</td>
+						</tr>
+						<tr>
+							<td class="{{darkMode ? 'metahead-dark' : 'metahead-default'}}">ACTION TARGET</td>
+							<td class="{{darkMode ? 'metavalue-dark' : 'metavalue-default'}}">{{action}}</td>
+						</tr>
+					</table>
+				</fieldset>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>QUERY PARAMS</strong>
+					</legend>
+					<div class="{{darkMode ? 'request-stats-dark' : 'request-stats-default'}}">
+                        {{dataParams}}
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>BODY</strong>
+					</legend>
+					<div class="{{darkMode ? 'request-stats-dark' : 'request-stats-default'}}">
+                        {{dataBody}}
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>EXECUTION TIME</strong>
+					</legend>
+					<div class="{{darkMode ? 'request-stats-dark' : 'request-stats-default'}}">
+                        {{execTime}}
+					</div>
+				</fieldset>
+			</td>
+			<td>
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>MEMORY USAGE</strong>
+					</legend>
+					<div class="{{darkMode ? 'request-stats-dark' : 'request-stats-default'}}">
+                        {{memUsage}}
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+        {% if guzzleHttp %}
+        <tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>HTTP REQUEST(guzzlehttp)</strong>
+					</legend>
+					<div style="color:#fff;font-weight:normal;padding:4px 0 4px 0;" align="left">
+						<table style="width:100%;">
+							<thead>
+								<tr>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 5%;">
+										NUMBER</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 10%;">
+										TIME(s)</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 35%;">
+										REQUEST</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 50%;">
+										RESPONSE</td>
+								</tr>
+							</thead>
+							<tbody>
+                                {% set number = 1 %}
+                                {% for http in guzzleHttp %}
+                                    <tr>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{number}}
+                                            {% set number = number + 1 %}
+                                            </td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{http['time']}}</td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{http['request']}}
+                                        </td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{ http['response']}}</td>
+                                    </tr>
+                                {% endfor %}
+        
+							</tbody>
+						</table>
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+        {% endif %}
+        {% if eloquentLog %}
+		<tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>QUERIES(eloquent)</strong>
+					</legend>
+					<div style="color:#fff;font-weight:normal;padding:4px 0 4px 0;" align="left">
+						<table style="width:100%;">
+							<thead>
+								<tr>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 5%;">
+										NUMBER</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 10%;">
+										TIME(ms)</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 65%;">
+										QUERY</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 20%;">
+										BINDINGS</td>
+								</tr>
+							</thead>
+							<tbody>
+                                {% set number = 1 %}
+                                {% for query in eloquentLog %}
+                                    <tr>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{number}}
+                                            {% set number = number + 1 %}
+                                            </td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{query['time']}}</td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            <code>{{query['query']}}</code>
+                                        </td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{ query['bindings']|json_encode(constant('JSON_PRETTY_PRINT')) }}</td>
+                                    </tr>
+                                {% endfor %}
+        
+							</tbody>
+						</table>
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+        {% endif %}
+
+        {% if doctrineLog %}
+		<tr>
+			<td colspan="2">
+				<fieldset class="{{darkMode ? 'fieldset-dark' : 'fieldset-default'}}">
+					<legend align="right"><strong>QUERIES(doctrine)</strong>
+					</legend>
+					<div style="color:#fff;font-weight:normal;padding:4px 0 4px 0;" align="left">
+						<table style="width:100%;">
+							<thead>
+								<tr>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 5%;">
+										NUMBER</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 10%;">
+										TIME(ms)</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 65%;">
+										QUERY</td>
+									<td class="{{darkMode ? 'query-dark' : 'query-default'}}" style="width: 20%;">
+										BINDINGS</td>
+								</tr>
+							</thead>
+							<tbody>
+                                {% set number = 1 %}
+                                {% for query in doctrineLog %}
+                                    <tr>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{number}}
+                                            {% set number = number + 1 %}
+                                            </td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{query['executionMS']}}</td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            <code>{{query['sql']}}</code>
+                                        </td>
+                                        <td class="{{darkMode ? 'query-dark' : 'query-default'}}">
+                                            {{ query['params']|json_encode(constant('JSON_PRETTY_PRINT')) }}</td>
+                                    </tr>
+                                {% endfor %}
+        
+							</tbody>
+						</table>
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+        {% endif %}
+	</table>
+</div>
+    <script>
+    function toggleResponse() {
+        var response = document.getElementById("dataResponse");
+        if (response.style.display === 'none') {
+            response.style.display = 'block';
+        } else response.style.display = 'none';
+    }
+    </script>
+</body>
+</html>
