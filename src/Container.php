@@ -4,13 +4,18 @@ namespace Simple\Profiler;
 
 class Container
 {
+    const HTTP_FORMAT = 'text/html';
+    const JSON_FORMAT = 'application/json';
+
     private $darkMode;
     private $eloquentManager;
     private $doctrineStack;
+    private $responseFormat;
 
     public function __construct() {
         // default mode
         $this->darkMode = true;
+        $this->responseFormat = Container::HTTP_FORMAT;
     }
 
     /**
@@ -62,6 +67,22 @@ class Container
     }
 
     /**
+     * @param string $responseFormat
+     */
+    public function setResponseFormat($responseFormat)
+    {
+        $this->responseFormat = $responseFormat;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseFormat()
+    {
+        return $this->responseFormat;
+    }
+
+    /**
      * @overide
      */
     public function toString()
@@ -69,7 +90,8 @@ class Container
         return json_encode([
             'darkMode' => $this->getDarkMode(),
             'eloquent' => is_object($this->getEloquentManager()),
-            'doctrine' => is_object($this->getDoctrineStack())
+            'doctrine' => is_object($this->getDoctrineStack()),
+            'responseFormat' => $this->getResponseFormat()
         ], JSON_PRETTY_PRINT);
     }
 }

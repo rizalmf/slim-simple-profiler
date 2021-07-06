@@ -22,7 +22,7 @@ class Profiler
     private static $httpstack;
 
     /**
-     * @param Container $container
+     * @param \Simple\Profiler\Container $container
      */
     public function __construct(Container $container) {
         $this->container = $container;        
@@ -46,6 +46,10 @@ class Profiler
         $php = $collections['php'];
         $time = $collections['time'];
         $memory = $collections['memory'];
+
+        // collect data params & body from slim request
+        $dataParams = $request->getQueryParams() ?? '';
+        $dataBody = $request->getParsedBody() ?? '';
 
         $darkMode = $this->container->getDarkMode();
 
@@ -73,16 +77,14 @@ class Profiler
             }
         }
 
-        $loader = new FilesystemLoader(__DIR__.'/template');
-        $twig = new Environment($loader);
-
+        // generate context
         $context = [
             'response' => empty($contents) ? $this->note : $contents,
             'uri' => $meta['uri'],
             'method' => $meta['method'],
             'action' => $actions,
-            'dataParams' => $data_request['$_GET'],
-            'dataBody' => $data_request['$_POST'],
+            'dataParams' => json_encode($dataParams, JSON_PRETTY_PRINT),
+            'dataBody' => json_encode($dataBody, JSON_PRETTY_PRINT),
             'execTime' => sprintf("%s (%s)", $time['duration_str'], $time['duration']),
             'memUsage' => sprintf("%s (%s)", $memory['peak_usage_str'], $memory['peak_usage']),
             'darkMode' => $darkMode,
@@ -90,13 +92,30 @@ class Profiler
             'eloquentLog' => $eloquentLog,
             'doctrineLog' => $doctrineLog
         ];
-        
-        $html = $twig->render('index.twig', $context);
 
-        // reset response. set context to html
+        // reset body.
         $response->getBody()->rewind();
-        $response->getBody()->write($html);
-        return $response->withHeader('Content-Type', 'text/html');
+
+        $responseFormat = $this->container->getResponseFormat();
+        switch ($responseFormat) {
+            case Container::HTTP_FORMAT:
+                $loader = new FilesystemLoader(__DIR__.'/template');
+                $twig = new Environment($loader);
+
+                $response->getBody()->write($twig->render('index.twig', $context));
+                break;
+
+            case Container::JSON_FORMAT:
+                $response->getBody()->write(
+                    json_encode($context, JSON_PRETTY_PRINT)
+                );
+                break;
+
+            default : // nothing todo here
+                break;
+        }
+
+        return $response->withHeader('Content-Type', $responseFormat);
     }
 
     public static function guzzleStack()

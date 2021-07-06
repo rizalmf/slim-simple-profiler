@@ -1,9 +1,12 @@
 # Slim Simple Profiler
 
-Simple Middleware For Profiling Slim Framework 3.
+Simple Middleware For Profiling Slim Framework 3. implement awesome library [maximebf/debugbar](http://phpdebugbar.com/).
 Inspired by Codeigniter profiler
 
 ## Screenshots
+![1](example/1.jpeg)
+![2](example/2.jpeg)
+
 
 ## Table of contents
 
@@ -38,6 +41,7 @@ $app->add(new Profiler(new Container()));
 ```
 
 ### Enable/disable darkmode
+Set darkmode html format. default: true
 ```php
 // ...
 $container = new Container();
@@ -127,7 +131,7 @@ $app->add(new Profiler($container));
 ```
 
 ### GuzzleHttp
-catch guzzlehttp events via Profiler::guzzleStack()
+Catch guzzlehttp events via Profiler::guzzleStack()
 ```php
 // ...
 
@@ -137,6 +141,21 @@ $stack->push(\Simple\Profiler\Profiler::guzzleStack());
 // set options \GuzzleHttp\Client 
 $options['handler'] = $stack;
 $client = new \GuzzleHttp\Client($options);
+```
+
+### Set response format
+Default: Container::HTTP_FORMAT
+```php
+// ...
+$container = new Container();
+
+// response as text/html
+$container->setResponseFormat(Container::HTTP_FORMAT);
+
+// response as application/json content-type
+$container->setResponseFormat(Container::JSON_FORMAT);
+
+$app->add(new Profiler($container));
 ```
 ## LICENSE
 
