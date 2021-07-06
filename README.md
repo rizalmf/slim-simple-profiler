@@ -16,6 +16,7 @@ Inspired by Codeigniter profiler
   - [Eloquent/ORM](#eloquent/orm)
   - [Doctrine/ORM](#doctrine/orm)
   - [GuzzleHttp](#guzzlehttp)
+  - [Set response format](#set-response-format)
 - [License](#license)
 
 ## Install 
