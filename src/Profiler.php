@@ -76,7 +76,7 @@ class Profiler
         $loader = new FilesystemLoader(__DIR__.'/template');
         $twig = new Environment($loader);
 
-        $html = $twig->render('index.twig', [
+        $context = [
             'response' => empty($contents) ? $this->note : $contents,
             'uri' => $meta['uri'],
             'method' => $meta['method'],
@@ -89,7 +89,9 @@ class Profiler
             'guzzleHttp' => self::$httpstack,
             'eloquentLog' => $eloquentLog,
             'doctrineLog' => $doctrineLog
-        ]);
+        ];
+        
+        $html = $twig->render('index.twig', $context);
 
         // reset response. set context to html
         $response->getBody()->rewind();

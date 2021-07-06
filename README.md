@@ -1,8 +1,9 @@
 # Slim Simple Profiler
 
-Simple Middleware For Profiling Slim Framework 3
+Simple Middleware For Profiling Slim Framework 3.
+Inspired by Codeigniter profiler
 
-## Sneakpeak
+## Screenshots
 
 ## Table of contents
 
@@ -12,7 +13,6 @@ Simple Middleware For Profiling Slim Framework 3
   - [Eloquent/ORM](#eloquent/orm)
   - [Doctrine/ORM](#doctrine/orm)
   - [GuzzleHttp](#guzzlehttp)
-- [Testing](#test)
 - [License](#license)
 
 ## Install 
@@ -33,32 +33,28 @@ require_once __DIR__ . '/vendor/autoload.php'; // example path
 
 $app = new \Slim\App();
 
-$container = new Container();
-
 // add middleware
-$app->add(new Profiler($container));
+$app->add(new Profiler(new Container()));
 ```
 
 ### Enable/disable darkmode
 ```php
 // ...
+$container = new Container();
 $container->setDarkMode(false);
 
 $app->add(new Profiler($container));
 ```
 
 ### Eloquent/ORM
-you need to install illuminate/events to your project to make it work
+Register \Illuminate\Database\Capsule\Manager to container
 ```php
 //-------- OPTION ONE --------//
-// in case you use static capsule
+// in case you use static Manager
 
 // ...
 $DB = new \Illuminate\Database\Capsule\Manager();
-$DB->addConnection($settings['eloquentcfg']);
-
-// enable events
-$DB->setEventDispatcher(new \Illuminate\Events\Dispatcher(new \Illuminate\Container\Container));
+$DB->addConnection($settings['your_eloquent_cfg']);
 
 $DB->setAsGlobal();
 $DB->bootEloquent();
@@ -80,9 +76,7 @@ $appContainer = $app->getContainer();
 
 $appContainer['capsule'] = function ($c) {
     $capsule = new \Illuminate\Database\Capsule\Manager;
-    $capsule->addConnection($c['eloquentcfg']);
-
-    $capsule->setEventDispatcher(new \Illuminate\Events\Dispatcher(new \Illuminate\Container\Container));
+    $capsule->addConnection($c->get('settings')['your_eloquent_cfg']);
 
     $capsule->setAsGlobal();
     $capsule->bootEloquent();
@@ -90,7 +84,7 @@ $appContainer['capsule'] = function ($c) {
     return $capsule;
 };
 
-// register to container
+// register capsule to container
 $container->setEloquentManager($appContainer['capsule']);
 
 // add middleware
@@ -98,16 +92,34 @@ $app->add(new Profiler($container));
 ```
     
 ### Doctrine/ORM
+Register \Doctrine\DBAL\Logging\DebugStack to container
 ```php
 // ...
+$settings = require __DIR__.'/../config/settings.php';
+$app = new \Slim\App($settings);
+
+$appContainer = $app->getContainer();
+
+$appContainer['dao'] = function ($c) {
+    $settings = $c->get('settings');
+
+    $config = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
+        $settings['doctrine']['meta']['entity_path'],
+        $settings['doctrine']['meta']['auto_generate_proxies'],
+        $settings['doctrine']['meta']['proxy_dir'],
+        $settings['doctrine']['meta']['cache'],
+        false
+    );
+    return \Doctrine\ORM\EntityManager::create($settings['doctrine']['connection'], $config);
+};
 
 // first.. you have to bind DebugStack to your entityManager
 $logger = new \Doctrine\DBAL\Logging\DebugStack();
-$entityManager->getConnection()
+$appContainer['dao']->getConnection()
     ->getConfiguration()
     ->setSQLLogger($logger);
 
-// last. register to container
+// register DebugStack to container
 $container->setDoctrineStack($logger);
 
 // add middleware
@@ -126,21 +138,6 @@ $stack->push(\Simple\Profiler\Profiler::guzzleStack());
 $options['handler'] = $stack;
 $client = new \GuzzleHttp\Client($options);
 ```
-
-## Test:
-
-1) [Composer](https://getcomposer.org) is a prerequisite for running the tests.
-
-```
-composer install
-```
-
-2) The tests can be executed by running this command from the root directory:
-
-```bash
-./vendor/bin/phpunit test
-```
-
 ## LICENSE
 
 The MIT License (MIT)
