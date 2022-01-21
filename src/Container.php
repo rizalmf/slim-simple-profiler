@@ -24,6 +24,7 @@ class Container
     public function setDarkMode($darkMode)
     {
         $this->darkMode = $darkMode;
+        return $this;
     }
 
     /**
@@ -40,6 +41,7 @@ class Container
     public function setEloquentManager($eloquentManager)
     {
         $this->eloquentManager = $eloquentManager;
+        return $this;
     }
 
     /**
@@ -56,6 +58,7 @@ class Container
     public function setDoctrineStack($debugStack)
     {
         $this->doctrineStack = $debugStack;
+        return $this;
     }
 
     /**
@@ -72,6 +75,7 @@ class Container
     public function setResponseFormat($responseFormat)
     {
         $this->responseFormat = $responseFormat;
+        return $this;
     }
 
     /**
